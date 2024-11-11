@@ -1,12 +1,13 @@
 package org.example;
 
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) { /*throws InterruptedException*/   // Alternative
 
-        CompletableFuture<Void> exampleOne = CompletableFuture.runAsync(() -> {
+        CompletableFuture<String> exampleOne = CompletableFuture.supplyAsync(() -> {
             System.out.println("Asynchronous One!");
             try {
                 Thread.sleep(3000);
@@ -15,9 +16,10 @@ public class Main {
                 e.printStackTrace();
             }
             System.out.println("Hello first world!");
+            return "Hello first world!";
         });
 
-        CompletableFuture<Void> exampleTwo = CompletableFuture.runAsync(() -> {
+        CompletableFuture<String> exampleTwo = CompletableFuture.supplyAsync(() -> {
             System.out.println("Asynchronous Two!");
             try {
                 Thread.sleep(5000);
@@ -25,7 +27,20 @@ public class Main {
                 e.printStackTrace();
             }
             System.out.println("Hello second world!");
+            return "Hello second world!";
+
         });
+
+        // Combine results from both tasks
+        CompletableFuture<String> combinedResult = exampleOne.thenCombine(exampleTwo,
+                (helloFirst, helloSecond) -> helloFirst + " " + helloSecond);
+
+// Print the combined result
+        combinedResult.thenAccept(System.out::println);
+
+// Wait for combined result to ensure the program does not terminate prematurely
+        combinedResult.join();
+
 
 //        // Ensure the main thread waits for the CompletableFuture to complete         //  Alternative
 //        example.join(); // This blocks the main thread until the async task is done   //  Alternative
@@ -35,5 +50,29 @@ public class Main {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
